@@ -4,17 +4,38 @@ document.getElementById('year').textContent = new Date().getFullYear();
 const toggle = document.getElementById('nav-toggle');
 const navLinks = document.getElementById('nav-links');
 
-toggle.addEventListener('click', () => {
+toggle.addEventListener('click', (e) => {
+  e.stopPropagation();
   navLinks.classList.toggle('open');
 });
 
-// Close mobile menu when link clicked
+// Close mobile menu when a link is clicked
 navLinks.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
     navLinks.classList.remove('open');
   });
 });
 
+// Close mobile menu when clicking outside of it
+document.addEventListener('click', (e) => {
+  if (
+    navLinks.classList.contains('open') &&
+    !navLinks.contains(e.target) &&
+    !toggle.contains(e.target)
+  ) {
+    navLinks.classList.remove('open');
+  }
+});
+
+// Close mobile menu on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') navLinks.classList.remove('open');
+});
+
+// Close mobile menu automatically if resized back to desktop width
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 860) navLinks.classList.remove('open');
+});
 
 // Navbar glass scroll effect
 const nav = document.querySelector(".nav-inner");
@@ -32,7 +53,6 @@ window.addEventListener("scroll", () => {
     nav.style.background = "rgba(255,255,255,0.06)";
   }
 });
-
 
 // Active nav link highlight on scroll
 const links = document.querySelectorAll('.nav-link');
