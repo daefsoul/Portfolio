@@ -6,12 +6,14 @@ const navLinks = document.getElementById('nav-links');
 
 toggle.addEventListener('click', (e) => {
   e.stopPropagation();
+  toggle.classList.toggle('open');
   navLinks.classList.toggle('open');
 });
 
 // Close mobile menu when a link is clicked
 navLinks.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
+    toggle.classList.remove('open');
     navLinks.classList.remove('open');
   });
 });
@@ -23,18 +25,25 @@ document.addEventListener('click', (e) => {
     !navLinks.contains(e.target) &&
     !toggle.contains(e.target)
   ) {
+    toggle.classList.remove('open');
     navLinks.classList.remove('open');
   }
 });
 
 // Close mobile menu on Escape key
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') navLinks.classList.remove('open');
+  if (e.key === 'Escape') {
+    toggle.classList.remove('open');
+    navLinks.classList.remove('open');
+  }
 });
 
 // Close mobile menu automatically if resized back to desktop width
 window.addEventListener('resize', () => {
-  if (window.innerWidth > 860) navLinks.classList.remove('open');
+  if (window.innerWidth > 860) {
+    toggle.classList.remove('open');
+    navLinks.classList.remove('open');
+  }
 });
 
 // Navbar glass scroll effect
@@ -58,7 +67,7 @@ window.addEventListener("scroll", () => {
 const links = document.querySelectorAll('.nav-link');
 const sections = document.querySelectorAll('section[id]');
 
-const observer = new IntersectionObserver((entries) => {
+const navObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       links.forEach(l => l.classList.remove('active'));
@@ -74,4 +83,18 @@ const observer = new IntersectionObserver((entries) => {
   rootMargin: '-40% 0px -55% 0px'
 });
 
-sections.forEach(section => observer.observe(section));
+sections.forEach(section => navObserver.observe(section));
+
+// Scroll-reveal animation for content blocks
+const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+revealEls.forEach(el => revealObserver.observe(el));
